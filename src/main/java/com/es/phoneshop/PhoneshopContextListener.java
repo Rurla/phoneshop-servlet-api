@@ -9,7 +9,7 @@ import javax.servlet.ServletContextListener;
 import java.math.BigDecimal;
 import java.util.Currency;
 
-public class PhoneshopServletContextListener implements ServletContextListener {
+public class PhoneshopContextListener implements ServletContextListener {
     @Override
     public void contextInitialized(ServletContextEvent servletContextEvent) {
         ProductDao productDao = new ArrayListProductDao();

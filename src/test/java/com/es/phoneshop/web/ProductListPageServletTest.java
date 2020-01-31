@@ -11,6 +11,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
@@ -36,6 +37,7 @@ public class ProductListPageServletTest {
     public void testDoGet() throws ServletException, IOException {
         servlet.doGet(request, response);
 
+        verify(request).setAttribute("products", new ArrayList<>());
         verify(requestDispatcher).forward(request, response);
     }
 }

@@ -2,22 +2,18 @@ package com.es.phoneshop.model.product;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class ArrayListProductDao implements ProductDao {
 
-    private static ArrayList<Product> products = new ArrayList<Product>();
+    private static List<Product> products = new ArrayList<>();
 
     @Override
     public Product getProduct(Long id) {
-        Optional<Product> optionalProduct = products.stream()
+        return products.stream()
                 .filter(product -> product.getId().equals(id))
-                .findAny();
-        if (optionalProduct.isPresent()) {
-            return optionalProduct.get();
-        }
-        throw new RuntimeException("Product not found");
+                .findAny()
+                .orElseThrow(() -> new RuntimeException("Product not found"));
     }
 
     @Override

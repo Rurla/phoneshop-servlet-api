@@ -53,7 +53,7 @@ public class ArrayListProductDaoTest
         productDao.save(product2);
         Product product3 = new Product("sgs", "Samsung Galaxy S", null, Currency.getInstance("USD"), 0, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Samsung/Samsung%20Galaxy%20S.jpg");
         productDao.save(product3);
-        Product product4 = new Product("sgs", "Samsung Galaxy S", new BigDecimal(100), Currency.getInstance("USD"), 100, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Samsung/Samsung%20Galaxy%20S.jpg");
+        Product product4 = new Product("s", "S", new BigDecimal(100), Currency.getInstance("USD"), 100, "https://raw.githubuseosipenko/phoneshop-ext-images/master/manufacturer/Samsung/Samsung%20Galaxy%20S.jpg");
         productDao.save(product4);
         List<Product> productList = new ArrayList<>(4);
         productList.add(product1);
