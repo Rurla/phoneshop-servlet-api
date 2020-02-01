@@ -13,12 +13,12 @@ import static org.junit.Assert.*;
 
 public class ArrayListProductDaoTest
 {
-    private ProductDao productDao;
+    private ArrayListProductDao productDao;
 
     @Before
     public void setup() {
         productDao = new ArrayListProductDao();
-        List<Product> products = new ArrayList<>(((ArrayListProductDao) productDao).findAllProducts());
+        List<Product> products = new ArrayList<>(productDao.findAllProducts());
         products.forEach(product -> productDao.delete(product.getId()));
     }
 
@@ -61,7 +61,7 @@ public class ArrayListProductDaoTest
         productList.add(product2);
         productList.add(product3);
         productList.add(product4);
-        assertEquals(((ArrayListProductDao) productDao).findAllProducts(), productList);
+        assertEquals(productDao.findAllProducts(), productList);
     }
 
     @Test
@@ -72,21 +72,35 @@ public class ArrayListProductDaoTest
     @Test
     public void saveNotNull() {
         productDao.save(new Product());
-        assertFalse(((ArrayListProductDao)productDao).findAllProducts().isEmpty());
+        assertFalse(productDao.findAllProducts().isEmpty());
     }
 
     @Test
     public void saveNull() {
         productDao.save(null);
-        assertTrue(((ArrayListProductDao)productDao).findAllProducts().isEmpty());
+        assertTrue(productDao.findAllProducts().isEmpty());
     }
 
     @Test
-    public void delete() {
+    public void deleteFirst() {
         Product product = new Product();
+        Product product1 = new Product();
         productDao.save(product);
+        productDao.save(product1);
         productDao.delete(product.getId());
-        assertTrue(((ArrayListProductDao)productDao).findAllProducts().isEmpty());
+        List<Product> products = productDao.findAllProducts();
+        assertTrue(products.contains(product1) && !products.contains(product));
+    }
+
+    @Test
+    public void deleteLast() {
+        Product product = new Product();
+        Product product1 = new Product();
+        productDao.save(product);
+        productDao.save(product1);
+        productDao.delete(product1.getId());
+        List<Product> products = productDao.findAllProducts();
+        assertTrue(products.contains(product) && !products.contains(product1));
     }
 
     @Test

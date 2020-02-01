@@ -27,7 +27,7 @@ public class ArrayListProductDao implements ProductDao {
     }
 
     public List<Product> findAllProducts() {
-        return products;
+        return new ArrayList<>(products);
     }
 
     @Override
@@ -39,9 +39,6 @@ public class ArrayListProductDao implements ProductDao {
 
     @Override
     public synchronized void delete(Long id) {
-        products.stream()
-                .filter(product -> product.getId().equals(id))
-                .findAny()
-                .ifPresent(product -> products.remove(product));
+        products.removeIf(product -> product.getId().equals(id));
     }
 }
