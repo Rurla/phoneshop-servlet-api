@@ -1,5 +1,6 @@
 package com.es.phoneshop.model.product;
 
+import com.es.phoneshop.exception.ProductNotFoundException;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -102,7 +103,7 @@ public class ArrayListProductDaoTest
             productDao.getProduct(0L);
         }
         catch(RuntimeException e) {
-            assertEquals(e.getMessage(), "Product not found");
+            assertEquals(e.getClass(), ProductNotFoundException.class);
         }
     }
 }

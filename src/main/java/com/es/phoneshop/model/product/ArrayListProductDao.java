@@ -1,5 +1,7 @@
 package com.es.phoneshop.model.product;
 
+import com.es.phoneshop.exception.ProductNotFoundException;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -13,7 +15,7 @@ public class ArrayListProductDao implements ProductDao {
         return products.stream()
                 .filter(product -> product.getId().equals(id))
                 .findAny()
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+                .orElseThrow(ProductNotFoundException::new);
     }
 
     @Override
