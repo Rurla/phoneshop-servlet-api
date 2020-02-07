@@ -10,6 +10,8 @@ public class ArrayListProductDao implements ProductDao {
 
     private static List<Product> products = new ArrayList<>();
 
+    private static Long nextId = 0L;
+
     @Override
     public Product getProduct(Long id) {
         return products.stream()
@@ -33,6 +35,7 @@ public class ArrayListProductDao implements ProductDao {
     @Override
     public synchronized void save(Product product) {
         if (product != null) {
+            product.setId(nextId++);
             products.add(product);
         }
     }
