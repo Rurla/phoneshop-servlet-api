@@ -13,7 +13,13 @@ public class ProductListPageServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         ProductDao productDao = new ArrayListProductDao();
-        request.setAttribute("products", productDao.findProducts());
+        String query = request.getParameter("query");
+        if (query != null) {
+            request.setAttribute("products", productDao.findByQuery(query));
+        }
+        else {
+            request.setAttribute("products", productDao.findProducts());
+        }
         request.getRequestDispatcher("/WEB-INF/pages/productList.jsp").forward(request, response);
     }
 }
