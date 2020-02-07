@@ -6,6 +6,10 @@ public class ProductNotFoundException extends RuntimeException {
         super("Product not found.");
     }
 
+    public ProductNotFoundException(long id) {
+        super(String.format("Product with id %d not found.", id));
+    }
+
     public ProductNotFoundException(String message) {
         super(message);
     }
