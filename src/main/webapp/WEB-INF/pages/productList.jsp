@@ -9,15 +9,21 @@
     Welcome to Expert-Soft training!
   </p>
   <form action="products" method="get">
-    <input type="text" name="query"/>
+    <input type="text" name="query" value="${param.getOrDefault("query", "")}"/>
     <input type="submit" value="Search"/>
   </form>
   <table>
     <thead>
       <tr>
+
         <td>Image</td>
-        <td>Description</td>
-        <td class="price">Price</td>
+        <td>Description
+          <a href=<c:url value="products?query=${param.query.replace(' ', '+')}&orderParam=description&order=asc"/> >asc</a>
+          <a href=<c:url value="products?query=${param.query.replace(' ', '+')}&orderParam=description&order=desc"/> >desc</a></td>
+        <td class="price">Price
+            <a href=<c:url value="products?query=${param.query.replace(' ', '+')}&orderParam=price&order=asc"/> >asc</a>
+            <a href=<c:url value="products?query=${param.query.replace(' ', '+')}&orderParam=price&order=desc"/> >desc</a>
+        </td>
       </tr>
     </thead>
     <c:forEach var="product" items="${products}">

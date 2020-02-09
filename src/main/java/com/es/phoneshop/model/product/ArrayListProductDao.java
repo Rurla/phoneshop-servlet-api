@@ -46,7 +46,7 @@ public class ArrayListProductDao implements ProductDao {
     }
 
     @Override
-    public List<Product> findByQuery(String query) {
+    public List<Product> findByQuery(String query, String orderParam, String order) {
         List<String> words = Arrays.asList(query.split(" "));
         ArrayList<Product> products = new ArrayList<>();
         words.forEach(word -> products.addAll(findProducts().stream()
@@ -55,15 +55,44 @@ public class ArrayListProductDao implements ProductDao {
                         .toLowerCase()
                         .contains(word.toLowerCase()))
                 .collect(Collectors.toList())));
-        return products.stream()
-                .distinct()
-                .sorted((product, product1) -> {
-                    AtomicInteger weight = new AtomicInteger(0);
-                    words.forEach(word -> {
-                        weight.updateAndGet(v -> v - (product.getDescription().contains(word) ? 1 : 0));
-                        weight.updateAndGet(v -> v + (product1.getDescription().contains(word) ? 1 : 0));
-                    });
-                    return weight.get();
-                }).collect(Collectors.toList());
+        if (order == null || orderParam == null) {
+            return products.stream()
+                    .distinct()
+                    .sorted((product, product1) -> {
+                        AtomicInteger weight = new AtomicInteger(0);
+                        words.forEach(word -> {
+                            weight.updateAndGet(v -> v - (product.getDescription().contains(word) ? 1 : 0));
+                            weight.updateAndGet(v -> v + (product1.getDescription().contains(word) ? 1 : 0));
+                        });
+                        return weight.get();
+                    }).collect(Collectors.toList());
+        }
+        List<Product> filteredProducts = products.stream().distinct().collect(Collectors.toList());
+        return sort(filteredProducts, orderParam, order);
+    }
+
+    private static List<Product> sort(List<Product> products, String orderParam, String order) {
+        products.sort((product, product1) -> {
+            if (orderParam.equals("description")) {
+                if (order.equals("asc")) {
+                    return product.getDescription().compareTo(product1.getDescription());
+                }
+                if (order.equals("desc")) {
+                    return product1.getDescription().compareTo(product.getDescription());
+                }
+                return 0;
+            }
+            if (orderParam.equals("price")) {
+                if (order.equals("asc")) {
+                    return product.getPrice().compareTo(product1.getPrice());
+                }
+                if (order.equals("desc")) {
+                    return product1.getPrice().compareTo(product.getPrice());
+                }
+                return 0;
+            }
+            return 0;
+        });
+        return products;
     }
 }
