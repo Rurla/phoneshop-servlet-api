@@ -13,7 +13,7 @@ public class ProductDetailsPageServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        long productId = Long.parseLong(request.getPathInfo().substring(1));
+        long productId = Long.parseLong(request.getPathInfo().replaceAll("/", ""));
         Product product = ArrayListProductDao.getInstance().getProduct(productId);
         request.setAttribute("product", product);
         request.getRequestDispatcher("/WEB-INF/pages/productDetails.jsp").forward(request, response);
