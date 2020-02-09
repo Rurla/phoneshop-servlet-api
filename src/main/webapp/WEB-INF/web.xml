@@ -15,6 +15,11 @@
     <servlet-class>com.es.phoneshop.web.ProductDetailsPageServlet</servlet-class>
   </servlet>
 
+  <servlet>
+    <servlet-name>productNotFound</servlet-name>
+    <servlet-class>com.es.phoneshop.web.ProductNotFoundServlet</servlet-class>
+  </servlet>
+
   <servlet-mapping>
     <servlet-name>productDetails</servlet-name>
     <url-pattern>/products/*</url-pattern>
@@ -25,10 +30,20 @@
     <url-pattern>/products</url-pattern>
   </servlet-mapping>
 
+  <servlet-mapping>
+    <servlet-name>productNotFound</servlet-name>
+    <url-pattern>/products/notFound</url-pattern>
+  </servlet-mapping>
+
   <listener>
     <listener-class>
       com.es.phoneshop.PhoneshopContextListener
     </listener-class>
   </listener>
+
+  <error-page>
+    <exception-type>com.es.phoneshop.exception.ProductNotFoundException</exception-type>
+    <location>/products/notFound</location>
+  </error-page>
 
 </web-app>
