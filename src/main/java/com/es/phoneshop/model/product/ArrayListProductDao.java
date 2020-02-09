@@ -8,9 +8,17 @@ import java.util.stream.Collectors;
 
 public class ArrayListProductDao implements ProductDao {
 
+    private static final ArrayListProductDao INSTANCE = new ArrayListProductDao();
+
     private static List<Product> products = new ArrayList<>();
 
     private static Long nextId = 0L;
+
+    public static ArrayListProductDao getInstance() {
+        return INSTANCE;
+    }
+
+    private ArrayListProductDao() {}
 
     @Override
     public Product getProduct(Long id) {
