@@ -13,6 +13,9 @@ public class HistoryRecord {
 
     private BigDecimal price;
 
+    public HistoryRecord() {
+    }
+
     public HistoryRecord(long productId, Date date, BigDecimal price) {
         this.productId = productId;
         this.date = date;

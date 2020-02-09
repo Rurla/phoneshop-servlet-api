@@ -41,8 +41,10 @@ public class ArrayListPriceHistoryDao implements PriceHistoryDao {
 
     @Override
     public void save(HistoryRecord historyRecord) {
-        historyRecord.setId(nextId++);
-        history.add(historyRecord);
+        if (historyRecord != null) {
+            historyRecord.setId(nextId++);
+            history.add(historyRecord);
+        }
     }
 
     @Override
