@@ -3,10 +3,11 @@ package com.es.phoneshop.model.pricehistory;
 import com.es.phoneshop.model.product.Product;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface PriceHistoryDao {
 
-    HistoryRecord getRecord(Long id);
+    Optional<HistoryRecord> getRecord(Long id);
 
     List<HistoryRecord> getHistoryForProduct(Long productId);
 

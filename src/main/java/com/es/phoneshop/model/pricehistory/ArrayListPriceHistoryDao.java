@@ -3,6 +3,7 @@ package com.es.phoneshop.model.pricehistory;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 public class ArrayListPriceHistoryDao implements PriceHistoryDao {
@@ -11,20 +12,23 @@ public class ArrayListPriceHistoryDao implements PriceHistoryDao {
 
     private static List<HistoryRecord> history = new ArrayList<>();
 
-    private static long nextId = 0;
+    private static AtomicLong nextId = new AtomicLong(0);
 
-    private ArrayListPriceHistoryDao() {}
+    private ArrayListPriceHistoryDao() {
+    }
 
     public static ArrayListPriceHistoryDao getInstance() {
         return INSTANCE;
     }
 
     @Override
-    public HistoryRecord getRecord(Long id) {
-        return Optional.of(history.stream()
-                .filter(historyRecord -> historyRecord.getId() == id)
-                .findAny()
-                .get()).get();
+    public Optional<HistoryRecord> getRecord(Long id) {
+        return Optional.of(
+                history.stream()
+                        .filter(historyRecord -> historyRecord.getId() == id)
+                        .findAny()
+                        .get()
+        );
     }
 
     @Override
@@ -41,10 +45,14 @@ public class ArrayListPriceHistoryDao implements PriceHistoryDao {
 
     @Override
     public void save(HistoryRecord historyRecord) {
-        if (historyRecord != null) {
-            historyRecord.setId(nextId++);
-            history.add(historyRecord);
-        }
+        save(Optional.ofNullable(historyRecord));
+    }
+
+    public void save(Optional<HistoryRecord> historyRecord) {
+        historyRecord.ifPresent(record -> {
+            record.setId(nextId.getAndIncrement());
+            history.add(record);
+        });
     }
 
     @Override

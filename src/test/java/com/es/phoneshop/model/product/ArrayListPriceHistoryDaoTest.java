@@ -40,7 +40,7 @@ public class ArrayListPriceHistoryDaoTest {
 
     @Test
     public void saveNull() {
-        priceHistoryDao.save(null);
+        priceHistoryDao.save((HistoryRecord) null);
         assertTrue(priceHistoryDao.getFullHistory().isEmpty());
     }
 
@@ -68,7 +68,7 @@ public class ArrayListPriceHistoryDaoTest {
 
     @Test
     public void getExistedRecord() {
-        HistoryRecord record = new HistoryRecord();
+        Optional<HistoryRecord> record = Optional.of(new HistoryRecord());
         priceHistoryDao.save(record);
         record = priceHistoryDao.getRecord(priceHistoryDao.getFullHistory().get(0).getId());
         assertNotNull(record);

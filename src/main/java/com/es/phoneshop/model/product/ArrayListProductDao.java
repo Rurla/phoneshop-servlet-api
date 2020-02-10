@@ -56,6 +56,16 @@ public class ArrayListProductDao implements ProductDao {
     @Override
     public List<Product> findByQuery(String query, String orderParam, String order) {
         List<String> words = Arrays.asList(query.split(" "));
+        List<Product> products = findByQueryUnsorted(query);
+        if (order == null || orderParam == null) {
+            return defaultSort(products, words);
+        }
+        List<Product> filteredProducts = products.stream().distinct().collect(Collectors.toList());
+        return sort(filteredProducts, orderParam, order);
+    }
+
+    public List<Product> findByQueryUnsorted(String query) {
+        List<String> words = Arrays.asList(query.split(" "));
         ArrayList<Product> products = new ArrayList<>();
         words.forEach(word -> products.addAll(findProducts().stream()
                 .filter(product -> product
@@ -63,20 +73,7 @@ public class ArrayListProductDao implements ProductDao {
                         .toLowerCase()
                         .contains(word.toLowerCase()))
                 .collect(Collectors.toList())));
-        if (order == null || orderParam == null) {
-            return products.stream()
-                    .distinct()
-                    .sorted((product, product1) -> {
-                        AtomicInteger weight = new AtomicInteger(0);
-                        words.forEach(word -> {
-                            weight.updateAndGet(v -> v - (product.getDescription().contains(word) ? 1 : 0));
-                            weight.updateAndGet(v -> v + (product1.getDescription().contains(word) ? 1 : 0));
-                        });
-                        return weight.get();
-                    }).collect(Collectors.toList());
-        }
-        List<Product> filteredProducts = products.stream().distinct().collect(Collectors.toList());
-        return sort(filteredProducts, orderParam, order);
+        return products;
     }
 
     private static List<Product> sort(List<Product> products, String orderParam, String order) {
@@ -103,4 +100,19 @@ public class ArrayListProductDao implements ProductDao {
         });
         return products;
     }
+
+    private static List<Product> defaultSort(List<Product> products, List<String> queryWords) {
+        return products.stream()
+                .distinct()
+                .sorted((product, product1) -> {
+                    AtomicInteger weight = new AtomicInteger(0);
+                    queryWords.forEach(word -> {
+                        weight.updateAndGet(v -> v - (product.getDescription().contains(word) ? 1 : 0));
+                        weight.updateAndGet(v -> v + (product1.getDescription().contains(word) ? 1 : 0));
+                    });
+                    return weight.get();
+                }).collect(Collectors.toList());
+    }
+
+
 }
