@@ -17,7 +17,7 @@ public class ArrayListProductDaoTest
 
     @Before
     public void setup() {
-        productDao = new ArrayListProductDao();
+        productDao = ArrayListProductDao.getInstance();
         List<Product> products = new ArrayList<>(productDao.findAllProducts());
         products.forEach(product -> productDao.delete(product.getId()));
     }
@@ -87,7 +87,7 @@ public class ArrayListProductDaoTest
         Product product1 = new Product();
         productDao.save(product);
         productDao.save(product1);
-        productDao.delete(product.getId());
+        productDao.delete(productDao.findAllProducts().get(0).getId());
         List<Product> products = productDao.findAllProducts();
         assertTrue(products.contains(product1) && !products.contains(product));
     }
@@ -98,7 +98,7 @@ public class ArrayListProductDaoTest
         Product product1 = new Product();
         productDao.save(product);
         productDao.save(product1);
-        productDao.delete(product1.getId());
+        productDao.delete(productDao.findAllProducts().get(1).getId());
         List<Product> products = productDao.findAllProducts();
         assertTrue(products.contains(product) && !products.contains(product1));
     }
@@ -107,7 +107,7 @@ public class ArrayListProductDaoTest
     public void getExistedProduct() {
         Product product = new Product();
         productDao.save(product);
-        product = productDao.getProduct(product.getId());
+        product = productDao.getProduct(productDao.findAllProducts().get(0).getId());
         assertNotNull(product);
     }
 

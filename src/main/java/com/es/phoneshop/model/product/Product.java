@@ -5,7 +5,7 @@ import java.util.Currency;
 
 public class Product {
 
-    private static Long nextId = 0L;
+
 
     private Long id;
     private String code;
@@ -18,11 +18,9 @@ public class Product {
     private String imageUrl;
 
     public Product() {
-        id = nextId++;
     }
 
     public Product(String code, String description, BigDecimal price, Currency currency, int stock, String imageUrl) {
-        this.id = nextId++;
         this.code = code;
         this.description = description;
         this.price = price;

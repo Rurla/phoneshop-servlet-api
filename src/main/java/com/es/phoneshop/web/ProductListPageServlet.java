@@ -12,8 +12,11 @@ import java.io.IOException;
 public class ProductListPageServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        ProductDao productDao = new ArrayListProductDao();
-        request.setAttribute("products", productDao.findProducts());
+        ProductDao productDao = ArrayListProductDao.getInstance();
+        String query = request.getParameterMap().getOrDefault("query", new String[]{""})[0];
+        String orderParam = request.getParameterMap().getOrDefault("orderParam", new String[]{""})[0];
+        String order = request.getParameterMap().getOrDefault("order", new String[]{""})[0];
+        request.setAttribute("products", productDao.findByQuery(query, orderParam, order));
         request.getRequestDispatcher("/WEB-INF/pages/productList.jsp").forward(request, response);
     }
 }

@@ -1,5 +1,8 @@
 package com.es.phoneshop;
 
+import com.es.phoneshop.model.pricehistory.ArrayListPriceHistoryDao;
+import com.es.phoneshop.model.pricehistory.HistoryRecord;
+import com.es.phoneshop.model.pricehistory.PriceHistoryDao;
 import com.es.phoneshop.model.product.ArrayListProductDao;
 import com.es.phoneshop.model.product.Product;
 import com.es.phoneshop.model.product.ProductDao;
@@ -8,14 +11,16 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import java.math.BigDecimal;
 import java.util.Currency;
+import java.util.Date;
 
-public class PhoneshopContextListener implements ServletContextListener {
+public class ProductDemodataServletContextListener implements ServletContextListener {
     @Override
     public void contextInitialized(ServletContextEvent servletContextEvent) {
-        ProductDao productDao = new ArrayListProductDao();
+        ProductDao productDao = ArrayListProductDao.getInstance();
+        PriceHistoryDao priceHistoryDao = ArrayListPriceHistoryDao.getInstance();
         Currency usd = Currency.getInstance("USD");
         productDao.save(new Product("sgs", "Samsung Galaxy S", new BigDecimal(100), usd, 100, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Samsung/Samsung%20Galaxy%20S.jpg"));
-        productDao.save(new Product("sgs2", "Samsung Galaxy S II", new BigDecimal(200), usd, 0, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Samsung/Samsung%20Galaxy%20S%20II.jpg"));
+        productDao.save(new Product("sgs2", "Samsung Galaxy S II", new BigDecimal(200), usd, 25, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Samsung/Samsung%20Galaxy%20S%20II.jpg"));
         productDao.save(new Product("sgs3", "Samsung Galaxy S III", new BigDecimal(300), usd, 5, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Samsung/Samsung%20Galaxy%20S%20III.jpg"));
         productDao.save(new Product("iphone", "Apple iPhone", new BigDecimal(200), usd, 10, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Apple/Apple%20iPhone.jpg"));
         productDao.save(new Product("iphone6", "Apple iPhone 6", new BigDecimal(1000), usd, 30, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Apple/Apple%20iPhone%206.jpg"));
@@ -27,6 +32,12 @@ public class PhoneshopContextListener implements ServletContextListener {
         productDao.save(new Product("simc56", "Siemens C56", new BigDecimal(70), usd, 20, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Siemens/Siemens%20C56.jpg"));
         productDao.save(new Product("simc61", "Siemens C61", new BigDecimal(80), usd, 30, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Siemens/Siemens%20C61.jpg"));
         productDao.save(new Product("simsxg75", "Siemens SXG75", new BigDecimal(150), usd, 40, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Siemens/Siemens%20SXG75.jpg"));
+
+        priceHistoryDao.save(new HistoryRecord(1, new Date(1493769600000L), new BigDecimal(500)));
+        priceHistoryDao.save(new HistoryRecord(1, new Date(1494806400000L), new BigDecimal(300)));
+        priceHistoryDao.save(new HistoryRecord(1, new Date(1499126400000L), new BigDecimal(230)));
+        priceHistoryDao.save(new HistoryRecord(1, new Date(1539043200000L), new BigDecimal(150)));
+        priceHistoryDao.save(new HistoryRecord(1, new Date(1570665600000L), new BigDecimal(200)));
     }
 
     @Override
