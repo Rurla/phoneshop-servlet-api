@@ -23,12 +23,9 @@ public class ArrayListPriceHistoryDao implements PriceHistoryDao {
 
     @Override
     public Optional<HistoryRecord> getRecord(Long id) {
-        return Optional.of(
-                history.stream()
+        return history.stream()
                         .filter(historyRecord -> historyRecord.getId() == id)
-                        .findAny()
-                        .get()
-        );
+                        .findAny();
     }
 
     @Override

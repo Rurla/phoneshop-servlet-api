@@ -18,7 +18,8 @@ public class ArrayListProductDao implements ProductDao {
         return INSTANCE;
     }
 
-    private ArrayListProductDao() {}
+    private ArrayListProductDao() {
+    }
 
     @Override
     public Product getProduct(Long id) {
@@ -54,56 +55,41 @@ public class ArrayListProductDao implements ProductDao {
     }
 
     @Override
-    public List<Product> findByQuery(String query, String orderParam, String order) {
+    public List<Product> findByQuery(String query, OrderParam orderParam, Order order) {
         List<String> words = Arrays.asList(query.split(" "));
         List<Product> products = findByQueryUnsorted(query);
         if (order == null || orderParam == null) {
             return defaultSort(products, words);
         }
-        List<Product> filteredProducts = products.stream().distinct().collect(Collectors.toList());
-        return sort(filteredProducts, orderParam, order);
+        return sort(products, orderParam, order);
     }
 
     public List<Product> findByQueryUnsorted(String query) {
         List<String> words = Arrays.asList(query.split(" "));
         ArrayList<Product> products = new ArrayList<>();
-        words.forEach(word -> products.addAll(findProducts().stream()
+        List<Product> allProducts = findProducts();
+        words.forEach(word -> products.addAll(allProducts.stream()
                 .filter(product -> product
                         .getDescription()
                         .toLowerCase()
                         .contains(word.toLowerCase()))
                 .collect(Collectors.toList())));
-        return products;
+        return products.stream().distinct()
+                .collect(Collectors.toList());
     }
 
-    private static List<Product> sort(List<Product> products, String orderParam, String order) {
-        products.sort((product, product1) -> {
-            if (orderParam.equals("description")) {
-                if (order.equals("asc")) {
-                    return product.getDescription().compareTo(product1.getDescription());
-                }
-                if (order.equals("desc")) {
-                    return product1.getDescription().compareTo(product.getDescription());
-                }
-                return 0;
-            }
-            if (orderParam.equals("price")) {
-                if (order.equals("asc")) {
-                    return product.getPrice().compareTo(product1.getPrice());
-                }
-                if (order.equals("desc")) {
-                    return product1.getPrice().compareTo(product.getPrice());
-                }
-                return 0;
-            }
-            return 0;
-        });
+    private static List<Product> sort(List<Product> products, OrderParam orderParam, Order order) {
+        Comparator<Product> comparator = orderParam.getComparator();
+        if (order == Order.asc) {
+            products.sort(comparator);
+        } else if (order == Order.desc) {
+            products.sort(comparator.reversed());
+        }
         return products;
     }
 
     private static List<Product> defaultSort(List<Product> products, List<String> queryWords) {
         return products.stream()
-                .distinct()
                 .sorted((product, product1) -> {
                     AtomicInteger weight = new AtomicInteger(0);
                     queryWords.forEach(word -> {
