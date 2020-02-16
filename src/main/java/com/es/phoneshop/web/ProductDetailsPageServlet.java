@@ -5,6 +5,8 @@ import com.es.phoneshop.model.cart.CartService;
 import com.es.phoneshop.model.cart.HttpSessionCartService;
 import com.es.phoneshop.model.product.ArrayListProductDao;
 import com.es.phoneshop.model.product.Product;
+import com.es.phoneshop.model.recently.HttpSessionRecentlyViewService;
+import com.es.phoneshop.model.recently.RecentlyViewService;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -19,13 +21,17 @@ public class ProductDetailsPageServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        ArrayListProductDao productDao = ArrayListProductDao.getInstance();
         String message = (String)request.getSession().getAttribute("message");
         boolean success = Boolean.parseBoolean(request.getParameter("success"));
         if (success) {
             message = "Added to cart successfully.";
         }
         long productId = Long.parseLong(request.getPathInfo().replaceAll("/", ""));
+        RecentlyViewService recentlyViewService = HttpSessionRecentlyViewService.getInstance();
+        recentlyViewService.add(request, productId);
         Product product = ArrayListProductDao.getInstance().getProduct(productId);
+        request.setAttribute("productDao", productDao);
         request.getSession().setAttribute("message", message);
         request.setAttribute("product", product);
         request.getRequestDispatcher("/WEB-INF/pages/productDetails.jsp").forward(request, response);
