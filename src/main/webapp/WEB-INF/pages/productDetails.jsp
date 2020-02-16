@@ -7,6 +7,15 @@
 
 <tags:master pageTitle="Product">
     <br>
+    <p>${sessionScope.message}</p>
+    <c:remove var="message"/>
+    <form action="${product.id}" method="post">
+        <label>
+            Quantity
+            <input type="number" name="quantity" value="1">
+        </label>
+        <input type="submit" value="Add to cart">
+    </form>
     <table>
         <tr>
             <th rowspan="4">
