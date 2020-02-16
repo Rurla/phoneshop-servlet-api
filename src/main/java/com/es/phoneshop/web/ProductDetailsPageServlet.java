@@ -1,5 +1,6 @@
 package com.es.phoneshop.web;
 
+import com.es.phoneshop.exception.InvalidNumberException;
 import com.es.phoneshop.exception.NotEnoughStockException;
 import com.es.phoneshop.model.cart.CartService;
 import com.es.phoneshop.model.cart.HttpSessionCartService;
@@ -47,13 +48,16 @@ public class ProductDetailsPageServlet extends HttpServlet {
         try {
             Locale locale = request.getLocale();
             quantity = NumberFormat.getNumberInstance(locale).parse(stringQuantity).intValue();
+            if (quantity < 1) {
+                throw new InvalidNumberException();
+            }
             cartService.add(request, productId, quantity);
         } catch (ParseException e) {
             message = String.format("\"%s\" not a number.", stringQuantity);
             request.getSession().setAttribute("message", message);
             doGet(request, response);
             return;
-        } catch (NotEnoughStockException e) {
+        } catch (NotEnoughStockException | InvalidNumberException e) {
             message = e.getMessage();
             request.getSession().setAttribute("message", message);
             doGet(request, response);

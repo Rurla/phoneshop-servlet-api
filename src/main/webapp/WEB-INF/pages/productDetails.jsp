@@ -13,7 +13,7 @@
     <form action="${product.id}" method="post">
         <label>
             Quantity
-            <input type="number" name="quantity" value="1">
+            <input type="number" name="quantity" value="1" min="1">
         </label>
         <input type="submit" value="Add to cart">
     </form>
