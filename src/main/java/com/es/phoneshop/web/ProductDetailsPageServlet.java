@@ -22,8 +22,10 @@ public class ProductDetailsPageServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        ArrayListProductDao productDao = ArrayListProductDao.getInstance();
-        String message = (String)request.getSession().getAttribute("message");
+        String message = (String) request.getAttribute("message");
+        if (message == null) {
+            message = "";
+        }
         boolean success = Boolean.parseBoolean(request.getParameter("success"));
         if (success) {
             message = "Added to cart successfully.";
@@ -32,8 +34,7 @@ public class ProductDetailsPageServlet extends HttpServlet {
         RecentlyViewService recentlyViewService = HttpSessionRecentlyViewService.getInstance();
         recentlyViewService.add(request, productId);
         Product product = ArrayListProductDao.getInstance().getProduct(productId);
-        request.setAttribute("productDao", productDao);
-        request.getSession().setAttribute("message", message);
+        request.setAttribute("message", message);
         request.setAttribute("product", product);
         request.getRequestDispatcher("/WEB-INF/pages/productDetails.jsp").forward(request, response);
     }
@@ -44,7 +45,6 @@ public class ProductDetailsPageServlet extends HttpServlet {
         long productId = Long.parseLong(request.getPathInfo().replaceAll("/", ""));
         String stringQuantity = request.getParameter("quantity");
         int quantity;
-        String message = "";
         try {
             Locale locale = request.getLocale();
             quantity = NumberFormat.getNumberInstance(locale).parse(stringQuantity).intValue();
@@ -53,17 +53,18 @@ public class ProductDetailsPageServlet extends HttpServlet {
             }
             cartService.add(request, productId, quantity);
         } catch (ParseException e) {
-            message = String.format("\"%s\" not a number.", stringQuantity);
-            request.getSession().setAttribute("message", message);
-            doGet(request, response);
+            String message = String.format("\"%s\" not a number.", stringQuantity);
+            sendExceptionMessage(message, request, response);
             return;
         } catch (NotEnoughStockException | InvalidNumberException e) {
-            message = e.getMessage();
-            request.getSession().setAttribute("message", message);
-            doGet(request, response);
+            sendExceptionMessage(e.getMessage(), request, response);
             return;
         }
-        request.getSession().setAttribute("message", message);
         response.sendRedirect(request.getRequestURI() + "?success=true");
+    }
+
+    private void sendExceptionMessage(String message, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        request.setAttribute("message", message);
+        doGet(request, response);
     }
 }

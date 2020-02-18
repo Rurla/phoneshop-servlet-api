@@ -1,9 +1,9 @@
 package com.es.phoneshop.model.recently;
 
+import java.io.Serializable;
 import java.util.LinkedList;
-import java.util.List;
 
-public class RecentlyView {
+public class RecentlyView implements Serializable {
 
     private LinkedList<Long> productIds = new LinkedList<>();
 

@@ -1,15 +1,14 @@
+<%@ page import="com.es.phoneshop.model.product.ArrayListProductDao" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="tags" tagdir="/WEB-INF/tags" %>
 
 <jsp:useBean id="product" type="com.es.phoneshop.model.product.Product" scope="request"/>
-<jsp:useBean id="productDao" type="com.es.phoneshop.model.product.ArrayListProductDao" scope="request"/>
+<jsp:useBean id="message" type="java.lang.String" scope="request"/>
 
 <tags:master pageTitle="Product">
-    <br>
-    <p>${sessionScope.message}</p>
-    <c:remove var="message"/>
+    <p>${message}</p>
     <form action="${product.id}" method="post">
         <label>
             Quantity
@@ -53,9 +52,12 @@
 
             <td>Image</td>
             <td>Description</td>
-            <td class="price">Price</tr>
+            <td class="price">Price
+        </tr>
         </thead>
+
         <c:forEach var="productId" items="${sessionScope.recently.productIds}">
+            <c:set var="productDao" value="<%=ArrayListProductDao.getInstance()%>"/>
             <c:set var="product" value="${productDao.getProduct(productId)}"/>
             <tr>
                 <td>
@@ -64,11 +66,11 @@
                 </td>
                 <td>
                     <a href="${product.id}">
-                        ${product.description}
+                            ${product.description}
                     </a>
                 </td>
                 <td class="price">
-                    <a href="products/price-history/${product.id}">
+                    <a href="price-history/${product.id}">
                         <fmt:formatNumber value="${product.price}" type="currency"
                                           currencySymbol="${product.currency.symbol}"/>
                     </a>
