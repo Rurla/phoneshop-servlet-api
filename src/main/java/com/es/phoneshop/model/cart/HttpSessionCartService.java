@@ -6,6 +6,7 @@ import com.es.phoneshop.model.product.ProductDao;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Optional;
 
 public class HttpSessionCartService implements CartService {
 
@@ -37,10 +38,16 @@ public class HttpSessionCartService implements CartService {
         }
         cartItems = cart.getCartItems();
         for (CartItem item : cartItems) {
-            addChecked(request, cartItems, item, addedCartItem, cart);
-            return;
+            if (item.getProductId() == addedCartItem.getProductId()) {
+                addChecked(request, cartItems, item, addedCartItem, cart);
+                return;
+            }
         }
         addUnchecked(request, cartItems, addedCartItem, cart);
+    }
+
+    public Optional<Cart> getCart(HttpServletRequest request) {
+        return Optional.of((Cart)request.getSession().getAttribute("cart"));
     }
 
     @Override
