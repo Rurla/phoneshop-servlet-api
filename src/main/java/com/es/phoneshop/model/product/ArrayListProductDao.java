@@ -23,10 +23,10 @@ public class ArrayListProductDao implements ProductDao {
 
     @Override
     public Product getProduct(Long id) {
-        return products.stream()
+        return new Product(products.stream()
                 .filter(product -> product.getId().equals(id))
                 .findAny()
-                .orElseThrow(() -> new ProductNotFoundException(id));
+                .orElseThrow(() -> new ProductNotFoundException(id)));
     }
 
     @Override
@@ -52,6 +52,23 @@ public class ArrayListProductDao implements ProductDao {
     @Override
     public synchronized void delete(Long id) {
         products.removeIf(product -> product.getId().equals(id));
+    }
+
+    @Override
+    public void updateProduct(Product product) {
+        if (product != null) {
+            products.forEach(product1 -> {
+                if (product.getId().equals(product1.getId())) {
+                    product1.setAvailable(product.getAvailable());
+                    product1.setStock(product.getStock());
+                    product1.setCode(product.getCode());
+                    product1.setCurrency(product.getCurrency());
+                    product1.setImageUrl(product.getImageUrl());
+                    product1.setDescription(product.getDescription());
+                    product1.setPrice(product.getPrice());
+                }
+            });
+        }
     }
 
     @Override

@@ -2,10 +2,12 @@ package com.es.phoneshop.model.cart;
 
 import com.es.phoneshop.exception.NotEnoughStockException;
 import com.es.phoneshop.model.product.ArrayListProductDao;
+import com.es.phoneshop.model.product.Product;
 import com.es.phoneshop.model.product.ProductDao;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class HttpSessionCartService implements CartService {
 
@@ -24,7 +26,7 @@ public class HttpSessionCartService implements CartService {
 
     public void add(HttpServletRequest request, CartItem addedCartItem) {
         ProductDao productDao = ArrayListProductDao.getInstance();
-        if (addedCartItem.getQuantity() > productDao.getProduct(addedCartItem.getProductId()).getStock()) {
+        if (productDao.getProduct(addedCartItem.getProductId()).getAvailable() < addedCartItem.getQuantity() ) {
             throw new NotEnoughStockException();
         }
         List<CartItem> cartItems;
@@ -66,25 +68,51 @@ public class HttpSessionCartService implements CartService {
     }
 
     @Override
+    public void updateCartItem(Cart cart, long productId, int quantity) {
+        List<CartItem> cartItems = cart.getCartItems();
+        AtomicInteger beforeQuantity = new AtomicInteger();
+        ProductDao productDao = ArrayListProductDao.getInstance();
+        Product product = productDao.getProduct(productId);
+        cartItems.forEach(cartItem -> {
+            if (cartItem.getProductId() == productId) {
+                beforeQuantity.set(cartItem.getQuantity());
+                product.setAvailable(product.getAvailable() + beforeQuantity.get());
+                if (product.getAvailable() >= quantity) {
+                    cartItem.setQuantity(quantity);
+                    product.setAvailable(product.getAvailable() - quantity);
+                    productDao.updateProduct(product);
+                }
+            }
+        });
+        cart.setCartItems(cartItems);
+    }
+
+    @Override
     public void add(HttpServletRequest request, long productId, int quantity) {
         add(request, new CartItem(productId, quantity));
     }
 
     private void addUnchecked(HttpServletRequest request, List<CartItem> cartItems, CartItem cartItem, Cart cart) {
+        ProductDao productDao = ArrayListProductDao.getInstance();
+        Product product = productDao.getProduct(cartItem.getProductId());
+        product.setAvailable(product.getAvailable() - cartItem.getQuantity());
         cartItems.add(cartItem);
         cart.setCartItems(cartItems);
+        productDao.updateProduct(product);
         request.getSession().setAttribute("cart", cart);
     }
 
     private void addChecked(HttpServletRequest request, List<CartItem> cartItems, CartItem item, CartItem addedCartItem, Cart cart) {
         ProductDao productDao = ArrayListProductDao.getInstance();
         if (item.getProductId() == addedCartItem.getProductId()) {
-            int newQuantity = item.getQuantity() + addedCartItem.getQuantity();
-            if (newQuantity > productDao.getProduct(item.getProductId()).getStock()) {
+            if (productDao.getProduct(item.getProductId()).getAvailable() < addedCartItem.getQuantity() ) {
                 throw new NotEnoughStockException();
             }
             item.setQuantity(item.getQuantity() + addedCartItem.getQuantity());
             cart.setCartItems(cartItems);
+            Product product = productDao.getProduct(addedCartItem.getProductId());
+            product.setAvailable(product.getAvailable() - addedCartItem.getQuantity());
+            productDao.updateProduct(product);
             request.getSession().setAttribute("cart", cart);
         }
     }

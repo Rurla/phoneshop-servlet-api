@@ -7,6 +7,7 @@
 <jsp:useBean id="cartItems" type="java.util.ArrayList" scope="request"/>
 <tags:master pageTitle="Cart">
     <br>
+    <form id="update" action="cart/update" method="post">
     <table>
         <thead>
         <tr>
@@ -32,7 +33,7 @@
                             ${product.description}
                     </a>
                 </td>
-                <td>${cartItem.quantity}</td>
+                <td><input form="update" type="number" name="${productId}" value="${cartItem.quantity}"></td>
                 <td class="price">
                     <a href="price-history/${product.id}">
                         <fmt:formatNumber value="${product.price}" type="currency"
@@ -40,12 +41,12 @@
                     </a>
                 </td>
                 <td>
-                    <form action="cart/deleteCartItem" method="post">
-                        <input type="hidden" name="productId" value="${productId}">
-                        <input type="submit" value="Delete">
-                    </form>
+                    <button formaction="cart/deleteCartItem" formmethod="post" name="productId" value="${productId}">Delete</button>
                 </td>
             </tr>
         </c:forEach>
     </table>
+        <br>
+    <input form="update" type="submit" value="Update">
+    </form>
 </tags:master>

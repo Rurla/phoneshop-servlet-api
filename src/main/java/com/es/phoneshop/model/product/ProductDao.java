@@ -11,5 +11,7 @@ public interface ProductDao {
 
     void delete(Long id);
 
+    void updateProduct(Product product);
+
     List<Product> findByQuery(String query, OrderParam orderParam, Order order);
 }

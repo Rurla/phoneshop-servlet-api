@@ -10,4 +10,6 @@ public interface CartService {
 
     void removeCartItem(HttpServletRequest request);
 
+    void updateCartItem(Cart cart, long productId, int quantity);
+
 }
