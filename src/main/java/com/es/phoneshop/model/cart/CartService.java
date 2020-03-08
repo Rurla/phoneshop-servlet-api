@@ -12,4 +12,6 @@ public interface CartService {
 
     void updateCartItem(Cart cart, long productId, int quantity);
 
+    void recalculateCart(Cart cart);
+
 }

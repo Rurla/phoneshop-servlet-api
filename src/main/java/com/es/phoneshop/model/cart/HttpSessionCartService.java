@@ -6,8 +6,10 @@ import com.es.phoneshop.model.product.Product;
 import com.es.phoneshop.model.product.ProductDao;
 
 import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class HttpSessionCartService implements CartService {
 
@@ -35,16 +37,19 @@ public class HttpSessionCartService implements CartService {
             cart = new Cart();
             cartItems = cart.getCartItems();
             addUnchecked(request, cartItems, addedCartItem, cart);
+            recalculateCart(cart);
             return;
         }
         cartItems = cart.getCartItems();
         for (CartItem item : cartItems) {
             if (item.getProductId() == addedCartItem.getProductId()) {
                 addChecked(request, cartItems, item, addedCartItem, cart);
+                recalculateCart(cart);
                 return;
             }
         }
         addUnchecked(request, cartItems, addedCartItem, cart);
+        recalculateCart(cart);
     }
 
     public Cart getCart(HttpServletRequest request) {
@@ -65,6 +70,7 @@ public class HttpSessionCartService implements CartService {
                 cartItem.getProductId() == Integer.parseInt(request.getParameter("productId"))
         );
         cart.setCartItems(cartItems);
+        recalculateCart(cart);
     }
 
     @Override
@@ -85,6 +91,21 @@ public class HttpSessionCartService implements CartService {
             }
         });
         cart.setCartItems(cartItems);
+        recalculateCart(cart);
+    }
+
+    @Override
+    public void recalculateCart(Cart cart) {
+        List<CartItem> cartItems = cart.getCartItems();
+        AtomicReference<BigDecimal> atomicTotalPrice = new AtomicReference<>(new BigDecimal(0));
+        cartItems.forEach(cartItem -> {
+            ProductDao productDao = ArrayListProductDao.getInstance();
+            Product product = productDao.getProduct(cartItem.getProductId());
+            BigDecimal totalPrice = atomicTotalPrice.get();
+            BigDecimal quantity = new BigDecimal(cartItem.getQuantity());
+            atomicTotalPrice.set(totalPrice.add(product.getPrice().multiply(quantity)));
+        });
+        cart.setTotalPrice(atomicTotalPrice.get());
     }
 
     @Override
