@@ -15,6 +15,7 @@
             <td>Description</td>
             <td>Amount</td>
             <td class="price">Price</td>
+            <td>Action</td>
         </tr>
         </thead>
         <c:set var="productDao" value="<%=ArrayListProductDao.getInstance()%>"/>
@@ -37,6 +38,12 @@
                         <fmt:formatNumber value="${product.price}" type="currency"
                                           currencySymbol="${product.currency.symbol}"/>
                     </a>
+                </td>
+                <td>
+                    <form action="cart/deleteCartItem" method="post">
+                        <input type="hidden" name="productId" value="${productId}">
+                        <input type="submit" value="Delete">
+                    </form>
                 </td>
             </tr>
         </c:forEach>

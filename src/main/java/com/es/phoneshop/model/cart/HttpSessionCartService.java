@@ -6,7 +6,6 @@ import com.es.phoneshop.model.product.ProductDao;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
-import java.util.Optional;
 
 public class HttpSessionCartService implements CartService {
 
@@ -46,8 +45,24 @@ public class HttpSessionCartService implements CartService {
         addUnchecked(request, cartItems, addedCartItem, cart);
     }
 
-    public Optional<Cart> getCart(HttpServletRequest request) {
-        return Optional.of((Cart)request.getSession().getAttribute("cart"));
+    public Cart getCart(HttpServletRequest request) {
+        Cart cart = (Cart)request.getSession().getAttribute("cart");
+        if (cart != null) {
+            return cart;
+        }
+        cart = new Cart();
+        request.getSession().setAttribute("cart", cart);
+        return cart;
+    }
+
+    @Override
+    public void removeCartItem(HttpServletRequest request) {
+        Cart cart = (Cart)request.getSession().getAttribute("cart");
+        List<CartItem> cartItems = cart.getCartItems();
+        cartItems.removeIf(cartItem ->
+                cartItem.getProductId() == Integer.parseInt(request.getParameter("productId"))
+        );
+        cart.setCartItems(cartItems);
     }
 
     @Override
