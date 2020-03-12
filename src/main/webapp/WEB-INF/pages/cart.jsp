@@ -33,7 +33,11 @@
                             ${product.description}
                     </a>
                 </td>
-                <td><input form="update" type="number" name="${productId}" value="${cartItem.quantity}"></td>
+                <td>
+                    <input form="update" type="number" name="${productId}" value="${cartItem.quantity}">
+                    <c:if test="${requestScope.errors.containsKey(productId)}">
+                        <p>${errors.get(productId).message}</p>
+                    </c:if></td>
                 <td class="price">
                     <a href="price-history/${product.id}">
                         <fmt:formatNumber value="${product.price}" type="currency"

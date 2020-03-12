@@ -1,5 +1,6 @@
 package com.es.phoneshop.model.cart;
 
+import com.es.phoneshop.exception.InvalidNumberException;
 import com.es.phoneshop.exception.NotEnoughStockException;
 import com.es.phoneshop.model.product.ArrayListProductDao;
 import com.es.phoneshop.model.product.Product;
@@ -89,11 +90,15 @@ public class HttpSessionCartService implements CartService {
             if (cartItem.getProductId() == productId) {
                 beforeQuantity.set(cartItem.getQuantity());
                 product.setAvailable(product.getAvailable() + beforeQuantity.get());
-                if (product.getAvailable() >= quantity) {
-                    cartItem.setQuantity(quantity);
-                    product.setAvailable(product.getAvailable() - quantity);
-                    productDao.updateProduct(product);
+                if (quantity <= 0) {
+                    throw new InvalidNumberException();
                 }
+                if (product.getAvailable() < quantity) {
+                    throw new NotEnoughStockException();
+                }
+                cartItem.setQuantity(quantity);
+                product.setAvailable(product.getAvailable() - quantity);
+                productDao.updateProduct(product);
             }
         });
         cart.setCartItems(cartItems);
