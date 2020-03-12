@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Map;
 
 public class CartPageServlet  extends HttpServlet {
     @Override
@@ -17,5 +18,18 @@ public class CartPageServlet  extends HttpServlet {
         Cart cart = cartService.getCart(request);
         request.setAttribute("cartItems", cart.getCartItems());
         request.getRequestDispatcher("/WEB-INF/pages/cart.jsp").forward(request, response);
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        Map<String, String[]> parameterMap = request.getParameterMap();
+        parameterMap.forEach((parameterName, parameterValues) -> {
+            long productId = Integer.parseInt(parameterName);
+            int quantity = Integer.parseInt(parameterValues[0]);
+            CartService cartService = HttpSessionCartService.getInstance();
+            Cart cart = cartService.getCart(request);
+            cartService.updateCartItem(cart, productId, quantity);
+        });
+        response.sendRedirect(request.getContextPath() + "/cart");
     }
 }

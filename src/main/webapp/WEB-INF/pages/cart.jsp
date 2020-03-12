@@ -7,7 +7,7 @@
 <jsp:useBean id="cartItems" type="java.util.ArrayList" scope="request"/>
 <tags:master pageTitle="Cart">
     <br>
-    <form id="update" action="cart/update" method="post">
+    <form id="update" action="cart" method="post">
     <table>
         <thead>
         <tr>

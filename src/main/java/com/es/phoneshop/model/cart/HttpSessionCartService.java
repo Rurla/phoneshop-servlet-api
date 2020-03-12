@@ -15,6 +15,8 @@ public class HttpSessionCartService implements CartService {
 
     private static volatile CartService cartService;
 
+    private static final ProductDao productDao = ArrayListProductDao.getInstance();
+
     public static CartService getInstance() {
         if (cartService == null) {
             synchronized (HttpSessionCartService.class) {
@@ -27,8 +29,7 @@ public class HttpSessionCartService implements CartService {
     }
 
     public void add(HttpServletRequest request, CartItem addedCartItem) {
-        ProductDao productDao = ArrayListProductDao.getInstance();
-        if (productDao.getProduct(addedCartItem.getProductId()).getAvailable() < addedCartItem.getQuantity() ) {
+        if (productDao.getProduct(addedCartItem.getProductId()).getAvailable() < addedCartItem.getQuantity()) {
             throw new NotEnoughStockException();
         }
         List<CartItem> cartItems;
@@ -53,7 +54,7 @@ public class HttpSessionCartService implements CartService {
     }
 
     public Cart getCart(HttpServletRequest request) {
-        Cart cart = (Cart)request.getSession().getAttribute("cart");
+        Cart cart = (Cart) request.getSession().getAttribute("cart");
         if (cart != null) {
             return cart;
         }
@@ -63,11 +64,17 @@ public class HttpSessionCartService implements CartService {
     }
 
     @Override
-    public void removeCartItem(HttpServletRequest request) {
-        Cart cart = (Cart)request.getSession().getAttribute("cart");
+    public void removeCartItem(Cart cart, long productId) {
         List<CartItem> cartItems = cart.getCartItems();
-        cartItems.removeIf(cartItem ->
-                cartItem.getProductId() == Integer.parseInt(request.getParameter("productId"))
+        cartItems.removeIf(cartItem -> {
+                    boolean remove = cartItem.getProductId() == productId;
+                    if (remove) {
+                        Product product = productDao.getProduct(productId);
+                        product.setAvailable(product.getAvailable() + cartItem.getQuantity());
+                        productDao.updateProduct(product);
+                    }
+                    return remove;
+                }
         );
         cart.setCartItems(cartItems);
         recalculateCart(cart);
@@ -77,7 +84,6 @@ public class HttpSessionCartService implements CartService {
     public void updateCartItem(Cart cart, long productId, int quantity) {
         List<CartItem> cartItems = cart.getCartItems();
         AtomicInteger beforeQuantity = new AtomicInteger();
-        ProductDao productDao = ArrayListProductDao.getInstance();
         Product product = productDao.getProduct(productId);
         cartItems.forEach(cartItem -> {
             if (cartItem.getProductId() == productId) {
@@ -114,7 +120,6 @@ public class HttpSessionCartService implements CartService {
     }
 
     private void addUnchecked(HttpServletRequest request, List<CartItem> cartItems, CartItem cartItem, Cart cart) {
-        ProductDao productDao = ArrayListProductDao.getInstance();
         Product product = productDao.getProduct(cartItem.getProductId());
         product.setAvailable(product.getAvailable() - cartItem.getQuantity());
         cartItems.add(cartItem);
@@ -124,9 +129,8 @@ public class HttpSessionCartService implements CartService {
     }
 
     private void addChecked(HttpServletRequest request, List<CartItem> cartItems, CartItem item, CartItem addedCartItem, Cart cart) {
-        ProductDao productDao = ArrayListProductDao.getInstance();
         if (item.getProductId() == addedCartItem.getProductId()) {
-            if (productDao.getProduct(item.getProductId()).getAvailable() < addedCartItem.getQuantity() ) {
+            if (productDao.getProduct(item.getProductId()).getAvailable() < addedCartItem.getQuantity()) {
                 throw new NotEnoughStockException();
             }
             item.setQuantity(item.getQuantity() + addedCartItem.getQuantity());

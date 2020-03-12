@@ -8,7 +8,7 @@ public interface CartService {
 
     Cart getCart(HttpServletRequest request);
 
-    void removeCartItem(HttpServletRequest request);
+    void removeCartItem(Cart cart, long productId);
 
     void updateCartItem(Cart cart, long productId, int quantity);
 

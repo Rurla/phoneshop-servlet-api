@@ -57,17 +57,19 @@ public class ArrayListProductDao implements ProductDao {
     @Override
     public void updateProduct(Product product) {
         if (product != null) {
-            products.forEach(product1 -> {
-                if (product.getId().equals(product1.getId())) {
-                    product1.setAvailable(product.getAvailable());
-                    product1.setStock(product.getStock());
-                    product1.setCode(product.getCode());
-                    product1.setCurrency(product.getCurrency());
-                    product1.setImageUrl(product.getImageUrl());
-                    product1.setDescription(product.getDescription());
-                    product1.setPrice(product.getPrice());
-                }
-            });
+
+            products.stream()
+                    .filter(product1 -> product.getId().equals(product1.getId()))
+                    .findAny()
+                    .ifPresent(product1 -> {
+                        product1.setAvailable(product.getAvailable());
+                        product1.setStock(product.getStock());
+                        product1.setCode(product.getCode());
+                        product1.setCurrency(product.getCurrency());
+                        product1.setImageUrl(product.getImageUrl());
+                        product1.setDescription(product.getDescription());
+                        product1.setPrice(product.getPrice());
+                    });
         }
     }
 

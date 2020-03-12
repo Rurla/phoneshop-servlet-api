@@ -31,11 +31,6 @@
   </servlet>
 
   <servlet>
-    <servlet-name>updateCart</servlet-name>
-    <servlet-class>com.es.phoneshop.web.cart.CartUpdateServlet</servlet-class>
-  </servlet>
-
-  <servlet>
     <servlet-name>miniCart</servlet-name>
     <servlet-class>com.es.phoneshop.web.cart.MiniCartServlet</servlet-class>
   </servlet>
@@ -68,11 +63,6 @@
   <servlet-mapping>
     <servlet-name>deleteCartItem</servlet-name>
     <url-pattern>/cart/deleteCartItem</url-pattern>
-  </servlet-mapping>
-
-  <servlet-mapping>
-    <servlet-name>updateCart</servlet-name>
-    <url-pattern>/cart/update</url-pattern>
   </servlet-mapping>
 
   <servlet-mapping>
