@@ -15,6 +15,7 @@ public class Product {
     /** can be null if the price is null */
     private Currency currency;
     private int stock;
+    private int available;
     private String imageUrl;
 
     public Product() {
@@ -26,7 +27,19 @@ public class Product {
         this.price = price;
         this.currency = currency;
         this.stock = stock;
+        this.available = stock;
         this.imageUrl = imageUrl;
+    }
+
+    public Product(Product product) {
+        this.id = product.id;
+        this.code = product.code;
+        this.description = product.description;
+        this.price = product.price;
+        this.currency = product.currency;
+        this.stock = product.stock;
+        this.available = product.available;
+        this.imageUrl = product.imageUrl;
     }
 
     public Long getId() {
@@ -83,5 +96,13 @@ public class Product {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public int getAvailable() {
+        return available;
+    }
+
+    public void setAvailable(int available) {
+        this.available = available;
     }
 }

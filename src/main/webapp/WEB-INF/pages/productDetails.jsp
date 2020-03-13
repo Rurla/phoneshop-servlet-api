@@ -40,8 +40,8 @@
             </td>
         </tr>
         <tr>
-            <td>Stock:</td>
-            <td>${product.stock}</td>
+            <td>Available:</td>
+            <td>${product.available}</td>
         </tr>
     </table>
 
