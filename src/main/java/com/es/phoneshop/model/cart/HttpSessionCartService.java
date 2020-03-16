@@ -37,12 +37,12 @@ public class HttpSessionCartService implements CartService {
         Cart cart = (Cart) request.getSession().getAttribute("cart");
         if (cart == null) {
             cart = new Cart();
-            cartItems = cart.getCartItems();
+            cartItems = cart.getItems();
             addUnchecked(request, cartItems, addedCartItem, cart);
             recalculateCart(cart);
             return;
         }
-        cartItems = cart.getCartItems();
+        cartItems = cart.getItems();
         for (CartItem item : cartItems) {
             if (item.getProductId() == addedCartItem.getProductId()) {
                 addChecked(request, cartItems, item, addedCartItem, cart);
@@ -66,7 +66,7 @@ public class HttpSessionCartService implements CartService {
 
     @Override
     public void removeCartItem(Cart cart, long productId) {
-        List<CartItem> cartItems = cart.getCartItems();
+        List<CartItem> cartItems = cart.getItems();
         cartItems.removeIf(cartItem -> {
                     boolean remove = cartItem.getProductId() == productId;
                     if (remove) {
@@ -77,13 +77,13 @@ public class HttpSessionCartService implements CartService {
                     return remove;
                 }
         );
-        cart.setCartItems(cartItems);
+        cart.setItems(cartItems);
         recalculateCart(cart);
     }
 
     @Override
     public void updateCartItem(Cart cart, long productId, int quantity) {
-        List<CartItem> cartItems = cart.getCartItems();
+        List<CartItem> cartItems = cart.getItems();
         AtomicInteger beforeQuantity = new AtomicInteger();
         Product product = productDao.getProduct(productId);
         cartItems.forEach(cartItem -> {
@@ -101,13 +101,13 @@ public class HttpSessionCartService implements CartService {
                 productDao.updateProduct(product);
             }
         });
-        cart.setCartItems(cartItems);
+        cart.setItems(cartItems);
         recalculateCart(cart);
     }
 
     @Override
     public void recalculateCart(Cart cart) {
-        List<CartItem> cartItems = cart.getCartItems();
+        List<CartItem> cartItems = cart.getItems();
         AtomicReference<BigDecimal> atomicTotalPrice = new AtomicReference<>(new BigDecimal(0));
         cartItems.forEach(cartItem -> {
             ProductDao productDao = ArrayListProductDao.getInstance();
@@ -128,7 +128,7 @@ public class HttpSessionCartService implements CartService {
         Product product = productDao.getProduct(cartItem.getProductId());
         product.setAvailable(product.getAvailable() - cartItem.getQuantity());
         cartItems.add(cartItem);
-        cart.setCartItems(cartItems);
+        cart.setItems(cartItems);
         productDao.updateProduct(product);
         request.getSession().setAttribute("cart", cart);
     }
@@ -139,7 +139,7 @@ public class HttpSessionCartService implements CartService {
                 throw new NotEnoughStockException();
             }
             item.setQuantity(item.getQuantity() + addedCartItem.getQuantity());
-            cart.setCartItems(cartItems);
+            cart.setItems(cartItems);
             Product product = productDao.getProduct(addedCartItem.getProductId());
             product.setAvailable(product.getAvailable() - addedCartItem.getQuantity());
             productDao.updateProduct(product);

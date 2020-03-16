@@ -55,7 +55,7 @@ public class ArrayListProductDao implements ProductDao {
     }
 
     @Override
-    public void updateProduct(Product product) {
+    public synchronized void updateProduct(Product product) {
         if (product != null) {
 
             products.stream()
