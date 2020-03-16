@@ -12,5 +12,5 @@ public interface OrderDao {
 
     void update(Order order);
 
-    void save(Order order);
+    Long save(Order order);
 }

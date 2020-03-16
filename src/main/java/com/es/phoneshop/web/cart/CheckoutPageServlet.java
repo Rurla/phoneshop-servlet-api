@@ -14,7 +14,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.math.BigDecimal;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -97,7 +98,9 @@ public class CheckoutPageServlet extends HttpServlet {
             order.setDeliveryDate(deliveryDate);
             order.setDeliveryAddress(deliveryAddress);
             order.setDeliveryCosts(Constants.DELIVERY_COSTS);
-            response.sendRedirect(request.getContextPath() + "/checkout");
+            long id = ORDER_SERVICE.placeOrder(order);
+            CART_SERVICE.clearCart(request);
+            response.sendRedirect(request.getContextPath() + "/order/overview/" + id);
         } else {
             request.setAttribute("errors", errors);
             request.getRequestDispatcher("/WEB-INF/pages/orderCheckout.jsp").forward(request, response);

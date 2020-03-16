@@ -40,6 +40,11 @@
     <servlet-class>com.es.phoneshop.web.cart.CheckoutPageServlet</servlet-class>
   </servlet>
 
+  <servlet>
+    <servlet-name>orderOverview</servlet-name>
+    <servlet-class>com.es.phoneshop.web.cart.OrderOverviewPageServlet</servlet-class>
+  </servlet>
+
   <servlet-mapping>
     <servlet-name>productDetails</servlet-name>
     <url-pattern>/products/*</url-pattern>
@@ -78,6 +83,11 @@
   <servlet-mapping>
     <servlet-name>checkout</servlet-name>
     <url-pattern>/checkout</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>orderOverview</servlet-name>
+    <url-pattern>/order/overview/*</url-pattern>
   </servlet-mapping>
 
 

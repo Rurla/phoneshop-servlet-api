@@ -4,10 +4,11 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="tags" tagdir="/WEB-INF/tags" %>
 
-<jsp:useBean id="cartItems" type="java.util.ArrayList" scope="request"/>
-<tags:master pageTitle="Cart">
-    <br>
-    <form id="update" action="cart" method="post">
+<jsp:useBean id="order" type="com.es.phoneshop.model.order.Order" scope="request"/>
+
+<tags:master pageTitle="Order overview">
+    <h1>Order overview</h1>
+    <h2>Cart information:</h2>
     <table>
         <thead>
         <tr>
@@ -16,12 +17,11 @@
             <td>Description</td>
             <td>Amount</td>
             <td class="price">Price</td>
-            <td>Action</td>
         </tr>
         </thead>
         <c:set var="productDao" value="<%=ArrayListProductDao.getInstance()%>"/>
-        <c:forEach var="cartItem" items="${cartItems}">
-            <c:set var="productId" value="${cartItem.productId}"/>
+        <c:forEach var="orderItem" items="${order.items}">
+            <c:set var="productId" value="${orderItem.productId}"/>
             <c:set var="product" value="${productDao.getProduct(productId)}"/>
             <tr>
                 <td>
@@ -34,24 +34,29 @@
                     </a>
                 </td>
                 <td>
-                    <input form="update" type="number" name="${productId}" value="${cartItem.quantity}">
-                    <c:if test="${requestScope.errors.containsKey(productId)}">
-                        <p>${errors.get(productId).message}</p>
-                    </c:if></td>
+                    ${orderItem.quantity}
                 <td class="price">
-                    <a href="price-history/${product.id}">
-                        <fmt:formatNumber value="${product.price}" type="currency"
+                        <fmt:formatNumber value="${orderItem.price}" type="currency"
                                           currencySymbol="${product.currency.symbol}"/>
-                    </a>
-                </td>
-                <td>
-                    <button formaction="cart/deleteCartItem" formmethod="post" name="productId" value="${productId}">Delete</button>
                 </td>
             </tr>
         </c:forEach>
     </table>
-        <br>
-    <input form="update" type="submit" value="Update">
-    <button formaction="checkout" formmethod="get">Order now</button>
-    </form>
+
+    <p>Products price: ${order.totalPrice}</p>
+    <p>Delivery costs: ${order.deliveryCosts}</p>
+    <p>Total: ${order.totalPrice + order.deliveryCosts}</p>
+    <p>Payment method: ${order.paymentMethod.toString().toLowerCase()}</p>
+
+    <h2>Contact details:</h2>
+    <p>First name: ${order.firstName}</p>
+    <p>Last name: ${order.lastName}</p>
+    <p>Phone number: +${order.phoneNumber}</p>
+
+    <h2>Delivery information:</h2>
+    <p>Delivery date: ${order.deliveryDate}</p>
+    <p>Delivery address: ${order.deliveryAddress}</p>
+
+
+
 </tags:master>

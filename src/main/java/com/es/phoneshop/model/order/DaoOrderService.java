@@ -2,6 +2,8 @@ package com.es.phoneshop.model.order;
 
 import com.es.phoneshop.model.cart.Cart;
 import com.es.phoneshop.model.cart.CartItem;
+import com.es.phoneshop.model.cart.CartService;
+import com.es.phoneshop.model.cart.HttpSessionCartService;
 import com.es.phoneshop.model.product.ArrayListProductDao;
 import com.es.phoneshop.model.product.Product;
 import com.es.phoneshop.model.product.ProductDao;
@@ -14,6 +16,8 @@ public class DaoOrderService implements OrderService {
     private static final OrderDao ORDER_DAO = ArrayListOrderDao.getInstance();
 
     private static final ProductDao PRODUCT_DAO = ArrayListProductDao.getInstance();
+
+    private static final CartService CART_SERVICE = HttpSessionCartService.getInstance();
 
     private static volatile DaoOrderService instance;
 
@@ -31,8 +35,9 @@ public class DaoOrderService implements OrderService {
     }
 
     @Override
-    public void placeOrder(Order order) {
-        ORDER_DAO.save(order);
+    public long placeOrder(Order order) {
+        return ORDER_DAO.save(order);
+
     }
 
     @Override

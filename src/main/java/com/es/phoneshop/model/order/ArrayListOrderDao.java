@@ -64,10 +64,12 @@ public class ArrayListOrderDao implements OrderDao {
     }
 
     @Override
-    public synchronized void save(Order order) {
+    public synchronized Long save(Order order) {
         if (order != null) {
             order.setId(nextId++);
             orders.add(order);
+            return order.getId();
         }
+        return null;
     }
 }

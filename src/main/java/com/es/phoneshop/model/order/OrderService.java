@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface OrderService {
 
-    void placeOrder(Order order);
+    long placeOrder(Order order);
 
     OrderItem cartItemToOrderItem(CartItem cartItem);
 

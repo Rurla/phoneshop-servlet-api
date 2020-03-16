@@ -106,6 +106,11 @@ public class HttpSessionCartService implements CartService {
     }
 
     @Override
+    public void clearCart(HttpServletRequest request) {
+        request.getSession().setAttribute("cart", new Cart());
+    }
+
+    @Override
     public void recalculateCart(Cart cart) {
         List<CartItem> cartItems = cart.getItems();
         AtomicReference<BigDecimal> atomicTotalPrice = new AtomicReference<>(new BigDecimal(0));

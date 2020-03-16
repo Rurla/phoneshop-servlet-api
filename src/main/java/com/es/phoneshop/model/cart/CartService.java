@@ -12,6 +12,8 @@ public interface CartService {
 
     void updateCartItem(Cart cart, long productId, int quantity);
 
+    void clearCart(HttpServletRequest request);
+
     void recalculateCart(Cart cart);
 
 }
