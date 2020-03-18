@@ -5,20 +5,31 @@
 <%@ taglib prefix="tags" tagdir="/WEB-INF/tags" %>
 
 <jsp:useBean id="products" type="java.util.ArrayList" scope="request"/>
+<jsp:useBean id="errors" type="java.util.HashMap" scope="request"/>
+<jsp:useBean id="description" type="java.lang.String" scope="request"/>
+<jsp:useBean id="type" type="java.lang.String" scope="request"/>
+<jsp:useBean id="minPrice" type="java.lang.String" scope="request"/>
+<jsp:useBean id="maxPrice" type="java.lang.String" scope="request"/>
 
 <tags:master pageTitle="Advanced search">
     <h1>Advanced search</h1>
     <form action="search" method="get">
         <p><label>
-            Description <input type="text" name="description">
-        <select name="type">
+            Description <input type="text" name="description" value="${description}">
+        <select name="type" >
             <option value="allWords">all words</option>
             <option value="anyWord">any word</option>
         </select>
         </label>
         </p>
-        <p><label>Min price <input type="text" name="minPrice"></label></p>
-        <p><label>Max price <input type="text" name="maxPrice"></label></p>
+        <p><label>Min price <input type="text" name="minPrice" value="${minPrice}"></label></p>
+            <c:if test='${errors.containsKey("minPrice")}'>
+            <p>${errors.get("minPrice")}</p>
+            </c:if>
+        <p><label>Max price <input type="text" name="maxPrice" value="${maxPrice}"></label></p>
+            <c:if test='${errors.containsKey("maxPrice")}'>
+                <p>${errors.get("maxPrice")}</p>
+            </c:if>
         <input type="submit" value="Search">
     </form>
 
