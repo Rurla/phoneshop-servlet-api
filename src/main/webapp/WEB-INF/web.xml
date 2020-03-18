@@ -7,17 +7,17 @@
 
   <servlet>
     <servlet-name>productList</servlet-name>
-    <servlet-class>com.es.phoneshop.web.ProductListPageServlet</servlet-class>
+    <servlet-class>com.es.phoneshop.web.product.ProductListPageServlet</servlet-class>
   </servlet>
 
   <servlet>
     <servlet-name>productDetails</servlet-name>
-    <servlet-class>com.es.phoneshop.web.ProductDetailsPageServlet</servlet-class>
+    <servlet-class>com.es.phoneshop.web.product.ProductDetailsPageServlet</servlet-class>
   </servlet>
 
   <servlet>
     <servlet-name>productPriceHistory</servlet-name>
-    <servlet-class>com.es.phoneshop.web.PriceHistoryPageServlet</servlet-class>
+    <servlet-class>com.es.phoneshop.web.product.PriceHistoryPageServlet</servlet-class>
   </servlet>
 
   <servlet>
@@ -43,6 +43,11 @@
   <servlet>
     <servlet-name>orderOverview</servlet-name>
     <servlet-class>com.es.phoneshop.web.cart.OrderOverviewPageServlet</servlet-class>
+  </servlet>
+
+  <servlet>
+    <servlet-name>productAdvancedSearch</servlet-name>
+    <servlet-class>com.es.phoneshop.web.product.AdvancedSearchPageServlet</servlet-class>
   </servlet>
 
   <servlet-mapping>
@@ -88,6 +93,11 @@
   <servlet-mapping>
     <servlet-name>orderOverview</servlet-name>
     <url-pattern>/order/overview/*</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>productAdvancedSearch</servlet-name>
+    <url-pattern>/products/search</url-pattern>
   </servlet-mapping>
 
 

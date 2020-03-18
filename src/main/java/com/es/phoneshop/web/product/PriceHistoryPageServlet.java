@@ -1,4 +1,4 @@
-package com.es.phoneshop.web;
+package com.es.phoneshop.web.product;
 
 import com.es.phoneshop.model.pricehistory.ArrayListPriceHistoryDao;
 import com.es.phoneshop.model.pricehistory.HistoryRecord;
