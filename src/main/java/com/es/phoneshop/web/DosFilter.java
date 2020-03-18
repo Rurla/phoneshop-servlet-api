@@ -8,7 +8,7 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@WebFilter("*")
+//@WebFilter("*")
 public class DosFilter implements Filter {
 
     private static final DosService dosService = DosServiceImpl.getInstance();
