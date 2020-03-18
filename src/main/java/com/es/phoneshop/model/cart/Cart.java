@@ -7,7 +7,7 @@ import java.util.List;
 
 public class Cart implements Serializable {
 
-    private List<CartItem> cartItems = new ArrayList<>();
+    private List<CartItem> items = new ArrayList<>();
 
     private BigDecimal totalPrice = new BigDecimal(0);
 
@@ -17,15 +17,15 @@ public class Cart implements Serializable {
 
     public Cart(Cart cart) {
         totalPrice = cart.totalPrice;
-        cartItems = cart.cartItems;
+        items = cart.items;
     }
 
-    public List<CartItem> getCartItems() {
-        return new ArrayList<>(cartItems);
+    public List<CartItem> getItems() {
+        return new ArrayList<>(items);
     }
 
-    public void setCartItems(List<CartItem> cartItems) {
-        this.cartItems = cartItems;
+    public void setItems(List<CartItem> cartItems) {
+        this.items = cartItems;
     }
 
     public BigDecimal getTotalPrice() {
