@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -18,7 +17,7 @@ import java.util.Map;
 
 public class AdvancedSearchPageServlet extends HttpServlet {
 
-    private static final ProductDao productDao = ArrayListProductDao.getInstance();
+    private static final ArrayListProductDao productDao = ArrayListProductDao.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -29,6 +28,7 @@ public class AdvancedSearchPageServlet extends HttpServlet {
         String description = request.getParameter("description");
         String minPriceString = request.getParameter("minPrice");
         String maxPriceString = request.getParameter("maxPrice");
+        String type = request.getParameter("type");
         BigDecimal minPrice = null;
         BigDecimal maxPrice = null;
         try {
@@ -51,6 +51,12 @@ public class AdvancedSearchPageServlet extends HttpServlet {
         if (queryString != null) {
             if (description.isEmpty() && minPriceString.isEmpty() && maxPriceString.isEmpty()) {
                 products = productDao.findProducts();
+            } else {
+                if (type.equals("allWords")) {
+                    products = productDao.findByQueryByAllWords(description, minPrice, maxPrice);
+                } else {
+                    products = productDao.findByQueryUnsorted(description, minPrice, maxPrice);
+                }
             }
         }
         request.setAttribute("errors", errors);
@@ -60,7 +66,7 @@ public class AdvancedSearchPageServlet extends HttpServlet {
 
     private BigDecimal parsePrice(String stringPrice) {
         BigDecimal price;
-        if (stringPrice.isEmpty()) {
+        if (stringPrice == null || stringPrice.isEmpty()) {
             price = new BigDecimal(0);
         } else {
             price = new BigDecimal(stringPrice);
@@ -70,9 +76,21 @@ public class AdvancedSearchPageServlet extends HttpServlet {
 
     private void setSearchParameters(HttpServletRequest request) {
         String description = request.getParameter("description");
+        if (description == null) {
+            description = "";
+        }
         String type = request.getParameter("type");
+        if (type == null) {
+            type = "";
+        }
         String minPriceString = request.getParameter("minPrice");
+        if (minPriceString == null) {
+            minPriceString = "";
+        }
         String maxPriceString = request.getParameter("maxPrice");
+        if (maxPriceString == null) {
+            maxPriceString = "";
+        }
 
         request.setAttribute("description", description);
         request.setAttribute("type", type);

@@ -2,6 +2,7 @@ package com.es.phoneshop.model.product;
 
 import com.es.phoneshop.exception.ProductNotFoundException;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -76,14 +77,14 @@ public class ArrayListProductDao implements ProductDao {
     @Override
     public List<Product> findByQuery(String query, OrderParam orderParam, Order order) {
         List<String> words = Arrays.asList(query.split(" "));
-        List<Product> products = findByQueryUnsorted(query);
+        List<Product> products = findByQueryUnsorted(query, BigDecimal.ZERO, BigDecimal.ZERO);
         if (order == null || orderParam == null) {
             return defaultSort(products, words);
         }
         return sort(products, orderParam, order);
     }
 
-    public List<Product> findByQueryUnsorted(String query) {
+    public List<Product> findByQueryUnsorted(String query, BigDecimal minPrice, BigDecimal maxPrice) {
         List<String> words = Arrays.asList(query.split(" "));
         ArrayList<Product> products = new ArrayList<>();
         List<Product> allProducts = findProducts();
@@ -92,8 +93,30 @@ public class ArrayListProductDao implements ProductDao {
                         .getDescription()
                         .toLowerCase()
                         .contains(word.toLowerCase()))
+                .filter(product -> product.getPrice().compareTo(minPrice) > 0)
+                .filter(product -> {
+                    if (maxPrice.equals(BigDecimal.ZERO)) {
+                        return true;
+                    }
+                    return product.getPrice().compareTo(maxPrice) < 0;
+                })
                 .collect(Collectors.toList())));
         return products.stream().distinct()
+                .collect(Collectors.toList());
+    }
+
+    public List<Product> findByQueryByAllWords(String query, BigDecimal minPrice, BigDecimal maxPrice) {
+        ArrayList<Product> products = new ArrayList<>();
+        List<Product> allProducts = findProducts();
+        return allProducts.stream()
+                .filter(product -> product.getDescription().contains(query))
+                .filter(product -> product.getPrice().compareTo(minPrice) > 0)
+                .filter(product -> {
+                    if (maxPrice.equals(BigDecimal.ZERO)) {
+                        return true;
+                    }
+                    return product.getPrice().compareTo(maxPrice) < 0;
+                })
                 .collect(Collectors.toList());
     }
 
