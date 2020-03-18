@@ -4,7 +4,7 @@ import com.es.phoneshop.Constants;
 import com.es.phoneshop.model.cart.Cart;
 import com.es.phoneshop.model.cart.CartService;
 import com.es.phoneshop.model.cart.HttpSessionCartService;
-import com.es.phoneshop.model.order.DaoOrderService;
+import com.es.phoneshop.model.order.OrderServiceImpl;
 import com.es.phoneshop.model.order.Order;
 import com.es.phoneshop.model.order.OrderService;
 import com.es.phoneshop.model.order.PaymentMethod;
@@ -24,13 +24,13 @@ import java.util.Map;
 
 public class CheckoutPageServlet extends HttpServlet {
 
-    private static final CartService CART_SERVICE = HttpSessionCartService.getInstance();
+    private static final CartService cartService = HttpSessionCartService.getInstance();
 
-    private static final OrderService ORDER_SERVICE = DaoOrderService.getInstance();
+    private static final OrderService orderService = OrderServiceImpl.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        Cart cart = CART_SERVICE.getCart(request);
+        Cart cart = cartService.getCart(request);
         request.setAttribute("cartItems", cart.getItems());
         request.setAttribute("deliveryCosts", Constants.DELIVERY_COSTS);
         request.getRequestDispatcher("/WEB-INF/pages/orderCheckout.jsp").forward(request, response);
@@ -38,8 +38,8 @@ public class CheckoutPageServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        Cart cart = CART_SERVICE.getCart(request);
-        Order order = ORDER_SERVICE.cartToOrder(cart);
+        Cart cart = cartService.getCart(request);
+        Order order = orderService.cartToOrder(cart);
         Map<String, String> errors = new HashMap<>();
         Locale locale = request.getLocale();
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", locale);
@@ -96,8 +96,8 @@ public class CheckoutPageServlet extends HttpServlet {
             order.setDeliveryDate(deliveryDate);
             order.setDeliveryAddress(deliveryAddress);
             order.setDeliveryCosts(Constants.DELIVERY_COSTS);
-            long id = ORDER_SERVICE.placeOrder(order);
-            CART_SERVICE.clearCart(request);
+            long id = orderService.placeOrder(order);
+            cartService.clearCart(request);
             response.sendRedirect(request.getContextPath() + "/order/overview/" + id);
         } else {
             request.setAttribute("errors", errors);

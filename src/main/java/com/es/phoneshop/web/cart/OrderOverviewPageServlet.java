@@ -12,12 +12,12 @@ import java.io.IOException;
 
 public class OrderOverviewPageServlet extends HttpServlet {
 
-    private static final OrderDao ORDER_DAO = ArrayListOrderDao.getInstance();
+    private static final OrderDao orderDao = ArrayListOrderDao.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         long orderId = Long.parseLong(request.getPathInfo().replaceAll("/", ""));
-        Order order = ORDER_DAO.getById(orderId);
+        Order order = orderDao.getById(orderId);
         request.setAttribute("order", order);
         request.getRequestDispatcher("/WEB-INF/pages/orderOverview.jsp").forward(request, response);
     }

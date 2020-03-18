@@ -34,10 +34,10 @@
                     </a>
                 </td>
                 <td>
-                    ${orderItem.quantity}
+                        ${orderItem.quantity}
                 <td class="price">
-                        <fmt:formatNumber value="${orderItem.price}" type="currency"
-                                          currencySymbol="${product.currency.symbol}"/>
+                    <fmt:formatNumber value="${orderItem.price}" type="currency"
+                                      currencySymbol="${product.currency.symbol}"/>
                 </td>
             </tr>
         </c:forEach>
@@ -56,7 +56,6 @@
     <h2>Delivery information:</h2>
     <p>Delivery date: ${order.deliveryDate}</p>
     <p>Delivery address: ${order.deliveryAddress}</p>
-
 
 
 </tags:master>

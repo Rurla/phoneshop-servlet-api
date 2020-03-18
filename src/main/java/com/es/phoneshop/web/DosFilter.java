@@ -5,14 +5,13 @@ import com.es.phoneshop.model.dos.DosServiceImpl;
 
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @WebFilter("*")
 public class DosFilter implements Filter {
 
-    private static final DosService DOS_SERVICE = DosServiceImpl.getInstance();
+    private static final DosService dosService = DosServiceImpl.getInstance();
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -23,7 +22,7 @@ public class DosFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
         String ip = request.getRemoteAddr();
 
-        if (DOS_SERVICE.isAllowed(ip)) {
+        if (dosService.isAllowed(ip)) {
             filterChain.doFilter(request, response);
         } else {
             ((HttpServletResponse)response).setStatus(429);

@@ -2,8 +2,6 @@ package com.es.phoneshop.model.order;
 
 import com.es.phoneshop.model.cart.Cart;
 import com.es.phoneshop.model.cart.CartItem;
-import com.es.phoneshop.model.cart.CartService;
-import com.es.phoneshop.model.cart.HttpSessionCartService;
 import com.es.phoneshop.model.product.ArrayListProductDao;
 import com.es.phoneshop.model.product.Product;
 import com.es.phoneshop.model.product.ProductDao;
@@ -11,23 +9,21 @@ import com.es.phoneshop.model.product.ProductDao;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DaoOrderService implements OrderService {
+public class OrderServiceImpl implements OrderService {
 
-    private static final OrderDao ORDER_DAO = ArrayListOrderDao.getInstance();
+    private static final OrderDao orderDao = ArrayListOrderDao.getInstance();
 
-    private static final ProductDao PRODUCT_DAO = ArrayListProductDao.getInstance();
+    private static final ProductDao productDao = ArrayListProductDao.getInstance();
 
-    private static final CartService CART_SERVICE = HttpSessionCartService.getInstance();
+    private static volatile OrderServiceImpl instance;
 
-    private static volatile DaoOrderService instance;
+    private OrderServiceImpl() {}
 
-    private DaoOrderService() {}
-
-    public static DaoOrderService getInstance() {
+    public static OrderServiceImpl getInstance() {
         if (instance == null) {
-            synchronized (DaoOrderService.class) {
+            synchronized (OrderServiceImpl.class) {
                 if (instance == null) {
-                    instance = new DaoOrderService();
+                    instance = new OrderServiceImpl();
                 }
             }
         }
@@ -36,13 +32,13 @@ public class DaoOrderService implements OrderService {
 
     @Override
     public long placeOrder(Order order) {
-        return ORDER_DAO.save(order);
+        return orderDao.save(order);
 
     }
 
     @Override
     public OrderItem cartItemToOrderItem(CartItem cartItem) {
-        Product product = PRODUCT_DAO.getProduct(cartItem.getProductId());
+        Product product = productDao.getProduct(cartItem.getProductId());
         return new OrderItem(cartItem, product.getPrice());
     }
 
